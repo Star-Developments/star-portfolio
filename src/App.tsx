@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import {
   Star,
   Github,
@@ -20,7 +21,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-
+import { Bot } from "lucide-react";
 interface Translations {
   [key: string]: {
     nav: {
@@ -53,6 +54,7 @@ interface Translations {
         frontend: string;
         design: string;
         mobile: string;
+        bot: string;
       };
     };
     work: {
@@ -127,22 +129,23 @@ const translations: Translations = {
         frontend: "Frontend-Entwicklung",
         design: "UI/UX Design",
         mobile: "Java Entwicklung",
+        bot: "Discord Bot Entwicklung",
       },
     },
     work: {
       title: "Ausgewählte Arbeiten",
       projects: {
         ecommerce: {
-          title: "dcs.lol",
-          desc: "Discord Link Kürzer",
+          title: "Star-SFTP",
+          desc: "Mein eigenes SFTP Client Projekt",
         },
         task: {
           title: "yukicraft.net",
           desc: "Minecraft Netzwerk",
         },
         portfolio: {
-          title: "BKT",
-          desc: "bkt-info.org - Discord Community",
+          title: "Helper Mike Discord Bot",
+          desc: "Ein Discord Bot für verschiedene Zwecke",
         },
       },
       viewProject: "Projekt ansehen",
@@ -204,22 +207,23 @@ const translations: Translations = {
         frontend: "Frontend Development",
         design: "UI/UX Design",
         mobile: "Java Development",
+        bot: "Discord Bot Development",
       },
     },
     work: {
       title: "Selected Work",
       projects: {
         ecommerce: {
-          title: "dcs.lol",
-          desc: "Discord Link Shortener",
+          title: "Star-SFTP",
+          desc: "My own SFTP client project",
         },
         task: {
           title: "yukicraft.net",
           desc: "Minecraft Network",
         },
         portfolio: {
-          title: "BKT",
-          desc: "bkt-info.org - Discord Community",
+          title: "Helper Mike Discord Bot",
+          desc: "A Discord bot for various purposes",
         },
       },
       viewProject: "View Project",
@@ -244,6 +248,18 @@ const translations: Translations = {
 };
 
 function App() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white overflow-hidden">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/github" element={<GitHubRedirect />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </div>
+  );
+}
+
+function HomePage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   const [language, setLanguage] = useState<"de" | "en">("de");
@@ -318,11 +334,7 @@ function App() {
   }, [zoomLevel, highContrast, reducedMotion]);
 
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden relative ${
-        highContrast ? "high-contrast" : ""
-      } ${reducedMotion ? "reduced-motion" : ""}`}
-    >
+    <>
       {/* Enhanced Animated background elements */}
       <div
         className={`fixed inset-0 overflow-hidden pointer-events-none ${
@@ -694,6 +706,12 @@ function App() {
                       color: "text-green-400",
                       hoverColor: "group-hover/skill:text-green-300",
                     },
+                    {
+                      icon: Bot,
+                      label: t.about.skills.bot,
+                      color: "text-cyan-400",
+                      hoverColor: "group-hover/skill:text-cyan-300",
+                    },
                   ].map((skill, index) => (
                     <div
                       key={index}
@@ -732,7 +750,7 @@ function App() {
                 description: t.work.projects.ecommerce.desc,
                 color: "from-orange-500/20 to-red-500/20",
                 accent: "orange-400",
-                href: "https://dcs.lol",
+                href: "https://github.com/EministarVR/Star-SFTP",
                 liquidColor:
                   "bg-gradient-to-t from-orange-500/40 via-orange-400/30 to-transparent",
                 waveColor: "bg-orange-500/60",
@@ -752,7 +770,7 @@ function App() {
                 description: t.work.projects.portfolio.desc,
                 color: "from-purple-500/20 to-pink-500/20",
                 accent: "purple-400",
-                href: "https://bkt-info.org",
+                href: "https://github.com/EministarVR/helper-mike",
                 liquidColor:
                   "bg-gradient-to-t from-purple-500/40 via-purple-400/30 to-transparent",
                 waveColor: "bg-purple-500/60",
@@ -862,195 +880,6 @@ function App() {
         </div>
       </section>
 
-      {/* Star Development Section */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-4 mb-8">
-              <div className="relative">
-                <Star className="w-8 h-8 text-orange-400" />
-                <div className="absolute inset-0 w-8 h-8 bg-orange-400/20 rounded-full blur-md animate-pulse" />
-              </div>
-              <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white via-orange-200 to-white bg-clip-text text-transparent">
-                Star Development
-              </h2>
-              <div className="relative">
-                <Star className="w-8 h-8 text-orange-400" />
-                <div className="absolute inset-0 w-8 h-8 bg-orange-400/20 rounded-full blur-md animate-pulse" />
-              </div>
-            </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              {language === "de"
-                ? "Unsere kreative Entwicklergruppe vereint Innovation, Leidenschaft und technische Exzellenz"
-                : "Our creative developer group unites innovation, passion and technical excellence"}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {[
-              {
-                icon: MessageCircle,
-                title: "Discord Community",
-                description:
-                  language === "de"
-                    ? "Tritt unserer lebendigen Community bei und vernetze dich mit gleichgesinnten Entwicklern"
-                    : "Join our vibrant community and connect with like-minded developers",
-                stats: "100+ Members",
-                href: "https://discord.gg/ErFRp9eSrj",
-              },
-              {
-                icon: Github,
-                title: "Open Source",
-                description:
-                  language === "de"
-                    ? "Entdecke unsere innovativen Projekte und trage zur Open-Source-Community bei"
-                    : "Discover our innovative projects and contribute to the open-source community",
-                stats: "5+ Repositories",
-                href: "https://github.com/Star-Developments",
-              },
-              {
-                icon: Globe,
-                title: "Star Network",
-                description:
-                  language === "de"
-                    ? "Erkunde unser Netzwerk aus Websites, Services und digitalen Lösungen"
-                    : "Explore our network of websites, services and digital solutions",
-                stats: "3+ Projects",
-                href: "https://discord.gg/ErFRp9eSrj",
-              },
-            ].map((item, index) => (
-              <a
-                key={item.title}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 hover:border-orange-500/50 transition-all duration-700 overflow-hidden cursor-pointer block"
-                style={{ animationDelay: `${index * 200}ms` }}
-              >
-                {/* Liquid Fill Waves */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1200">
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-orange-500/30 to-amber-500/30 transform translate-y-full group-hover:translate-y-0 transition-transform duration-1200 ease-out"
-                    style={{
-                      clipPath:
-                        "polygon(0% 100%, 100% 100%, 100% 60%, 85% 65%, 70% 55%, 55% 65%, 40% 55%, 25% 65%, 10% 55%, 0% 60%)",
-                      transitionDelay: "0ms",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-amber-400/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-1200 ease-out"
-                    style={{
-                      clipPath:
-                        "polygon(0% 100%, 100% 100%, 100% 70%, 90% 75%, 75% 65%, 60% 75%, 45% 65%, 30% 75%, 15% 65%, 0% 70%)",
-                      transitionDelay: "200ms",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-amber-500/15 to-orange-500/15 transform translate-y-full group-hover:translate-y-0 transition-transform duration-1200 ease-out"
-                    style={{
-                      clipPath:
-                        "polygon(0% 100%, 100% 100%, 100% 80%, 80% 85%, 60% 75%, 40% 85%, 20% 75%, 0% 80%)",
-                      transitionDelay: "400ms",
-                    }}
-                  />
-
-                  {/* Floating Bubbles */}
-                  {[...Array(8)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-2 h-2 bg-white/40 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-bounce"
-                      style={{
-                        left: `${15 + i * 10}%`,
-                        bottom: `${10 + (i % 3) * 15}%`,
-                        animationDelay: `${i * 150}ms`,
-                        animationDuration: `${1.5 + (i % 3) * 0.5}s`,
-                      }}
-                    />
-                  ))}
-
-                  {/* Shimmer Effect */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                    style={{ transitionDelay: "300ms" }}
-                  >
-                    <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 group-hover:left-full transition-all duration-1000" />
-                  </div>
-                </div>
-
-                <div className="relative z-10">
-                  <div className="mb-6">
-                    <div className="relative inline-block">
-                      <item.icon className="w-12 h-12 text-orange-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-700" />
-                      <div className="absolute inset-0 w-12 h-12 bg-orange-400/20 rounded-full blur-md group-hover:blur-lg transition-all duration-700" />
-                    </div>
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-white transition-colors duration-700">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-gray-400 mb-6 leading-relaxed group-hover:text-gray-200 transition-colors duration-700">
-                    {item.description}
-                  </p>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-orange-400 font-semibold group-hover:text-white transition-colors duration-700">
-                      {item.stats}
-                    </span>
-                    <div className="flex items-center text-orange-400 group-hover:text-white transition-colors duration-700">
-                      <span className="text-sm font-medium mr-2">
-                        {language === "de" ? "Entdecken" : "Explore"}
-                      </span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-700" />
-                    </div>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center">
-            <div className="inline-flex flex-col items-center gap-6">
-              <a
-                href="https://discord.gg/ErFRp9eSrj"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative px-12 py-4 bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 rounded-full text-white font-semibold hover:border-orange-400 transition-all duration-700 overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500 opacity-0 group-hover:opacity-100 transform -translate-x-full group-hover:translate-x-0 transition-all duration-700" />
-                <span className="relative z-10 group-hover:text-white transition-colors duration-700">
-                  {language === "de"
-                    ? "Werde Teil von Star Development"
-                    : "Join Star Development"}
-                </span>
-              </a>
-
-              <div className="flex items-center gap-8 text-sm text-gray-400">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span>
-                    {language === "de"
-                      ? "Aktive Community"
-                      : "Active Community"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                  <span>
-                    {language === "de" ? "Open Source" : "Open Source"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
-                  <span>{language === "de" ? "Innovation" : "Innovation"}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Mobile-Optimized Contact Section with Liquid Effects */}
       <section id="contact" className="py-20 sm:py-32 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -1089,8 +918,14 @@ function App() {
                 <a
                   key={index}
                   href={contact.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  target={
+                    contact.href.startsWith("mailto:") ? undefined : "_blank"
+                  }
+                  rel={
+                    contact.href.startsWith("mailto:")
+                      ? undefined
+                      : "noopener noreferrer"
+                  }
                   className="group/contactItem flex flex-col items-center space-y-3 sm:space-y-4 p-4 sm:p-6 rounded-xl sm:rounded-2xl hover:bg-white/[0.02] transition-all duration-500 overflow-hidden"
                   aria-label={`Contact via ${contact.label}`}
                 >
@@ -1343,6 +1178,77 @@ function App() {
         }
         `}
       </style>
+    </>
+  );
+}
+
+// Simple component that immediately redirects to the GitHub page
+function GitHubRedirect() {
+  useEffect(() => {
+    const url = "https://github.star-dev.xyz";
+    // Open in a new tab; if blocked, user can click the fallback link below
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    // If popup blocked or failed, stay on page with fallback
+    if (!opened) {
+      // no-op, fallback UI below provides a manual link
+    }
+  }, []);
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950">
+      <div className="text-center p-8 backdrop-blur-2xl bg-white/[0.02] border border-white/[0.06] rounded-3xl shadow-2xl">
+        <div className="mb-6 animate-pulse text-4xl">🔗</div>
+        <p className="text-white/80 font-extralight mb-4">
+          Weiterleitung zu GitHub…
+        </p>
+        <a
+          href="https://github.star-dev.xyz"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+        >
+          Falls nichts passiert, hier klicken
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// Custom 404 page styled like the rest of the site
+function NotFoundPage() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+      <div className="relative max-w-2xl w-full text-center">
+        {/* Liquid background */}
+        <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 blur-2xl" />
+
+        <div className="backdrop-blur-2xl bg-white/[0.02] border border-white/[0.06] rounded-3xl p-10 shadow-2xl">
+          <div className="mb-6 flex justify-center">
+            <Star className="h-10 w-10 text-orange-400 animate-spin-slow" />
+          </div>
+          <h1 className="text-5xl sm:text-6xl font-extralight tracking-tight mb-4">
+            404
+          </h1>
+          <p className="text-white/60 font-extralight text-lg mb-8">
+            Diese Seite gibt es nicht. Lass uns zurück zur Sternenbasis gehen.
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-orange-500/20 text-orange-200 hover:bg-orange-500/30 transition-colors border border-orange-400/20"
+            >
+              <ArrowRight className="h-5 w-5 rotate-180" />
+              Zurück zur Startseite
+            </a>
+            <a
+              href="/github"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+            >
+              <Github className="h-5 w-5" />
+              Zu GitHub
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

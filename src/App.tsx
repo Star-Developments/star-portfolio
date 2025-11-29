@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import {
   Star,
   Github,
@@ -20,14 +20,21 @@ import {
   EyeOff,
   Volume2,
   VolumeX,
+  Menu,
+  X,
 } from "lucide-react";
 import { Bot } from "lucide-react";
+import BlogIndex from "./components/BlogIndex";
+import BlogPost from "./components/BlogPost";
+import FiverrPalinski from "./pages/FiverrPalinski";
+import GlobalContextMenu from "./components/ContextMenu";
 interface Translations {
   [key: string]: {
     nav: {
       about: string;
       work: string;
       contact: string;
+      blog: string;
     };
     hero: {
       title: string;
@@ -91,6 +98,7 @@ const translations: Translations = {
       about: "Über mich",
       work: "Projekte",
       contact: "Kontakt",
+      blog: "Blog",
     },
     hero: {
       title: "Eministar",
@@ -122,7 +130,7 @@ const translations: Translations = {
     about: {
       title: "Über mich",
       description1:
-        "Ich bin Nael-Emin Ben Oun, ein leidenschaftlicher Entwickler und Designer, der aktuell bei YukiCraft.net als Entwickler tätig ist. Ich glaube daran, digitale Erlebnisse zu schaffen, die nicht nur schön aussehen, sondern auch außergewöhnliche Benutzererfahrungen bieten.",
+        "Ich bin Nael-Emin Ben Oun, ein leidenschaftlicher Entwickler und Designer, der aktuell bei YukiCraft.net und Nebuliton Hosting als Entwickler tätig ist. Ich glaube daran, digitale Erlebnisse zu schaffen, die nicht nur schön aussehen, sondern auch außergewöhnliche Benutzererfahrungen bieten.",
       description2:
         "Mit einem scharfen Auge für Details und einer Liebe für sauberes, modernes Design erschaffe ich Lösungen, die einen bleibenden Eindruck hinterlassen.",
       skills: {
@@ -172,6 +180,7 @@ const translations: Translations = {
       about: "About",
       work: "Work",
       contact: "Contact",
+      blog: "Blog",
     },
     hero: {
       title: "Eministar",
@@ -200,7 +209,7 @@ const translations: Translations = {
     about: {
       title: "About",
       description1:
-        "I'm Nael-Emin Ben Oun, a passionate developer and designer currently working as a developer at YukiCraft.net. I believe in creating digital experiences that not only look beautiful but also provide exceptional user experiences.",
+        "I'm Nael-Emin Ben Oun, a passionate developer and designer currently working as a developer at YukiCraft.net and Nebuliton Hosting. I believe in creating digital experiences that not only look beautiful but also provide exceptional user experiences.",
       description2:
         "With a keen eye for detail and a love for clean, modern design, I craft solutions that make a lasting impact.",
       skills: {
@@ -252,9 +261,13 @@ function App() {
     <div className="min-h-screen bg-slate-950 text-white overflow-hidden">
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/blogs" element={<BlogIndex />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/fiverr/palinski" element={<FiverrPalinski />} />
         <Route path="/github" element={<GitHubRedirect />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <GlobalContextMenu />
     </div>
   );
 }
@@ -269,6 +282,9 @@ function HomePage() {
   const [highContrast, setHighContrast] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Mobile nav state
+  const [navOpen, setNavOpen] = useState(false);
 
   const t = translations[language];
 
@@ -438,9 +454,9 @@ function HomePage() {
       {/* Mobile-Optimized Navigation with Liquid Effects */}
       <nav className="fixed top-0 w-full z-50 p-3 sm:p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="group backdrop-blur-2xl bg-white/[0.02] border border-white/[0.05] rounded-2xl sm:rounded-3xl px-4 py-3 sm:px-8 sm:py-5 shadow-2xl hover:bg-white/[0.05] transition-all duration-700 hover:border-white/[0.1]">
+          <div className="relative group backdrop-blur-2xl bg-white/[0.02] border border-white/[0.05] rounded-2xl sm:rounded-3xl px-4 py-3 sm:px-8 sm:py-5 shadow-2xl hover:bg-white/[0.05] transition-all duration-700 hover:border-white/[0.1]">
             {/* Liquid fill effect for nav */}
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-orange-500/10 rounded-2xl sm:rounded-3xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-orange-500/10 rounded-2xl sm:rounded-3xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left pointer-events-none"></div>
 
             <div className="flex justify-between items-center relative z-10">
               <div className="flex items-center space-x-2 sm:space-x-4">
@@ -454,7 +470,8 @@ function HomePage() {
                 </span>
               </div>
 
-              <div className="flex items-center space-x-4 sm:space-x-8">
+              {/* Desktop links */}
+              <div className="hidden sm:flex items-center space-x-4 sm:space-x-8">
                 {[
                   { key: "about", label: t.nav.about },
                   { key: "work", label: t.nav.work },
@@ -471,6 +488,58 @@ function HomePage() {
                     <div className="absolute inset-0 bg-white/5 rounded-lg opacity-0 group-hover/nav:opacity-100 transition-opacity duration-300 -z-10"></div>
                   </button>
                 ))}
+                <Link
+                  to="/blogs"
+                  className="relative text-white/60 hover:text-white transition-all duration-500 font-extralight tracking-wide group/nav text-sm sm:text-base"
+                  aria-label="Navigate to Blog"
+                >
+                  {t.nav.blog}
+                  <div className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-orange-400 to-amber-400 group-hover/nav:w-full transition-all duration-500"></div>
+                  <div className="absolute inset-0 bg-white/5 rounded-lg opacity-0 group-hover/nav:opacity-100 transition-opacity duration-300 -z-10"></div>
+                </Link>
+              </div>
+
+              {/* Mobile hamburger */}
+              <button
+                aria-label="Menü öffnen"
+                aria-expanded={navOpen}
+                aria-controls="home-mobile-nav"
+                className="sm:hidden p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/80 hover:bg-white/[0.08] transition-all"
+                onClick={() => setNavOpen((v) => !v)}
+              >
+                {navOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+
+            {/* Mobile dropdown */}
+            <div
+              id="home-mobile-nav"
+              className={`sm:hidden overflow-hidden transition-[max-height] duration-500 ${navOpen ? "max-h-96" : "max-h-0"}`}
+            >
+              <div className="mt-3 flex flex-col gap-2 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                {[
+                  { key: "about", label: t.nav.about },
+                  { key: "work", label: t.nav.work },
+                  { key: "contact", label: t.nav.contact },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => {
+                      setNavOpen(false);
+                      scrollToSection(item.key);
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+                <Link
+                  to="/blogs"
+                  onClick={() => setNavOpen(false)}
+                  className="w-full text-left px-4 py-3 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition"
+                >
+                  {t.nav.blog}
+                </Link>
               </div>
             </div>
           </div>
@@ -480,18 +549,12 @@ function HomePage() {
       {/* Mobile-Optimized Hero Section with Enhanced Liquid Effects */}
       <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 relative pt-32 sm:pt-32">
         <div className="text-center max-w-6xl mx-auto">
-          {/* Mobile-optimized star logo with liquid pulse */}
+          {/* Refined star: subtle twinkle, no ripple */}
           <div className="mb-8 sm:mb-12 relative">
             <div className="relative inline-block group/hero">
-              <Star className="h-16 w-16 sm:h-24 sm:w-24 text-orange-400 fill-current mx-auto animate-pulse transition-all duration-700 group-hover/hero:scale-125 group-hover/hero:rotate-12" />
-              <div className="absolute inset-0 bg-orange-400/40 rounded-full blur-2xl sm:blur-3xl animate-pulse"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-amber-400/20 rounded-full blur-xl sm:blur-2xl"></div>
-              {/* Ripple effect */}
-              <div className="absolute inset-0 bg-orange-400/10 rounded-full animate-ping opacity-75"></div>
-              <div
-                className="absolute inset-0 bg-orange-400/5 rounded-full animate-ping opacity-50"
-                style={{ animationDelay: "1s" }}
-              ></div>
+              <Star className="h-16 w-16 sm:h-24 sm:w-24 text-orange-400 fill-current mx-auto animate-twinkle transition-all duration-500 group-hover/hero:scale-110 group-hover/hero:rotate-3" />
+              <div className="absolute inset-0 rounded-full blur-2xl sm:blur-3xl bg-orange-400/30 animate-soft-glow"></div>
+              <div className="absolute inset-0 rounded-full blur-xl sm:blur-2xl bg-gradient-to-r from-orange-400/15 to-amber-400/15"></div>
             </div>
           </div>
 
@@ -654,6 +717,15 @@ function HomePage() {
                     >
                       YukiCraft.net
                     </a>{" "}
+                    und bei{" "}
+                    <a
+                      href="https://nebuliton.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/70 hover:text-orange-400 underline decoration-white/30 hover:decoration-orange-400/60 underline-offset-2 transition-all duration-300"
+                    >
+                      Nebuliton&nbsp;Hosting
+                    </a>{" "}
                     als Entwickler tätig ist. Ich glaube daran, digitale
                     Erlebnisse zu schaffen, die nicht nur schön aussehen,
                     sondern auch außergewöhnliche Benutzererfahrungen bieten.
@@ -669,6 +741,15 @@ function HomePage() {
                       className="text-white/70 hover:text-orange-400 underline decoration-white/30 hover:decoration-orange-400/60 underline-offset-2 transition-all duration-300"
                     >
                       YukiCraft.net
+                    </a>{" "}
+                    and at{" "}
+                    <a
+                      href="https://nebuliton.io"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/70 hover:text-orange-400 underline decoration-white/30 hover:decoration-orange-400/60 underline-offset-2 transition-all duration-300"
+                    >
+                      Nebuliton Hosting
                     </a>
                     . I believe in creating digital experiences that not only
                     look beautiful but also provide exceptional user
@@ -750,7 +831,7 @@ function HomePage() {
                 description: t.work.projects.ecommerce.desc,
                 color: "from-orange-500/20 to-red-500/20",
                 accent: "orange-400",
-                href: "https://github.com/EministarVR/Star-SFTP",
+                href: "https://github.com/Eministar/Star-SFTP",
                 liquidColor:
                   "bg-gradient-to-t from-orange-500/40 via-orange-400/30 to-transparent",
                 waveColor: "bg-orange-500/60",
@@ -770,7 +851,7 @@ function HomePage() {
                 description: t.work.projects.portfolio.desc,
                 color: "from-purple-500/20 to-pink-500/20",
                 accent: "purple-400",
-                href: "https://github.com/EministarVR/helper-mike",
+                href: "https://github.com/Eministar/helper-mike",
                 liquidColor:
                   "bg-gradient-to-t from-purple-500/40 via-purple-400/30 to-transparent",
                 waveColor: "bg-purple-500/60",
@@ -906,7 +987,7 @@ function HomePage() {
                   icon: Github,
                   label: "@eministar",
                   color: "blue-400",
-                  href: "https://github.com/eministarvr",
+                  href: "https://github.com/eministar",
                 },
                 {
                   icon: MessageCircle,
@@ -1165,15 +1246,15 @@ function HomePage() {
           border-color: rgba(255, 255, 255, 0.3) !important;
         }
 
-        .high-contrast .text-white\/70 {
+        .high-contrast .text-white\\/70 {
           color: rgba(255, 255, 255, 0.9) !important;
         }
 
-        .high-contrast .text-white\/60 {
+        .high-contrast .text-white\\/60 {
           color: rgba(255, 255, 255, 0.8) !important;
         }
 
-        .high-contrast .text-white\/50 {
+        .high-contrast .text-white\\/50 {
           color: rgba(255, 255, 255, 0.7) !important;
         }
         `}
